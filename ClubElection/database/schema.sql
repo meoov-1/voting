@@ -41,5 +41,5 @@ CREATE TABLE election_settings (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO admins (username, password) VALUES ('admin', SHA2('admin', 256));
+INSERT INTO admins (username, password) VALUES ('admin', '11b8f59207d9086fb7a4d4e3e40850d9bc989bea8fe59a21ddc1112397b1fd35');
 INSERT INTO election_settings (election_title, is_active) VALUES ('Club Election 2025', FALSE);
