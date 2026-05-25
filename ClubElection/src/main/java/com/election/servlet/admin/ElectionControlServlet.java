@@ -27,8 +27,9 @@ public class ElectionControlServlet extends HttpServlet {
 
         try {
             if ("start".equals(action)) {
-                settingsDAO.setElectionActive(true);
-                response.sendRedirect(request.getContextPath() + "/admin/dashboard?msg=Election+started");
+                // Reset all votes + has_voted flags, then activate
+                settingsDAO.startFreshElection();
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard?msg=Election+started+and+votes+reset");
             } else if ("stop".equals(action)) {
                 settingsDAO.setElectionActive(false);
                 response.sendRedirect(request.getContextPath() + "/admin/dashboard?msg=Election+stopped");

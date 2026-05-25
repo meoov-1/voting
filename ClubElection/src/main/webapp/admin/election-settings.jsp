@@ -135,15 +135,13 @@
                 <div class="quick-control-item">
                     <div>
                         <strong>Start Election</strong>
-                        <p>Immediately open voting for all registered users.</p>
+                        <p>Immediately open voting. <strong>All previous votes will be reset.</strong></p>
                     </div>
-                    <form action="${pageContext.request.contextPath}/admin/election-control" method="post">
-                        <input type="hidden" name="action" value="start">
-                        <button type="submit" class="btn btn-success" <%= isActive ? "disabled" : "" %>>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                            Start
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-success" <%= isActive ? "disabled" : "" %>
+                            onclick="confirmStartElection()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        Start
+                    </button>
                 </div>
                 <div class="quick-control-divider"></div>
                 <div class="quick-control-item">
@@ -165,6 +163,28 @@
     </div>
 </div>
 
+<!-- Start Election Confirmation Modal -->
+<div class="modal-overlay" id="startElectionModal" role="dialog" aria-modal="true">
+    <div class="modal glass">
+        <div class="modal-icon modal-icon-warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h3>Start New Election?</h3>
+        <p>This will <strong>reset all existing votes</strong> and mark every voter as "not voted".</p>
+        <p class="modal-warning">⚠ All current vote data will be permanently erased. This cannot be undone.</p>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="closeStartModal()">Cancel</button>
+            <form action="${pageContext.request.contextPath}/admin/election-control" method="post" style="display:inline;">
+                <input type="hidden" name="action" value="start">
+                <button type="submit" class="btn btn-success">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    Yes, Start &amp; Reset
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 (function() {
     const saved = localStorage.getItem('theme');
@@ -178,6 +198,15 @@ function toggleTheme() {
 function toggleSidebar() {
     document.querySelector('.admin-sidebar').classList.toggle('open');
 }
+function confirmStartElection() {
+    document.getElementById('startElectionModal').classList.add('active');
+}
+function closeStartModal() {
+    document.getElementById('startElectionModal').classList.remove('active');
+}
+document.getElementById('startElectionModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeStartModal();
+});
 </script>
 </body>
 </html>

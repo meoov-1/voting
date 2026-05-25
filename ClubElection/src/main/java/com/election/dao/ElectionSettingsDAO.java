@@ -71,6 +71,48 @@ public class ElectionSettingsDAO {
         }
     }
 
+    /**
+     * Resets all voting data in a single transaction:
+     *  - Clears the votes table
+     *  - Resets all candidates vote_count to 0
+     *  - Resets all users has_voted to FALSE
+     *  - Sets election active = TRUE
+     */
+    public void startFreshElection() throws SQLException {
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+            try {
+                // 1. Delete all votes
+                try (PreparedStatement s = conn.prepareStatement("DELETE FROM votes")) {
+                    s.executeUpdate();
+                }
+                // 2. Reset candidate vote counts
+                try (PreparedStatement s = conn.prepareStatement("UPDATE candidates SET vote_count = 0")) {
+                    s.executeUpdate();
+                }
+                // 3. Reset all approved users has_voted flag
+                try (PreparedStatement s = conn.prepareStatement("UPDATE users SET has_voted = FALSE")) {
+                    s.executeUpdate();
+                }
+                // 4. Activate the election
+                try (PreparedStatement s = conn.prepareStatement(
+                        "UPDATE election_settings SET is_active = TRUE ORDER BY id DESC LIMIT 1")) {
+                    s.executeUpdate();
+                }
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } finally {
+            DBConnection.close(conn);
+        }
+    }
+
     public boolean setEndTime(String endTime) throws SQLException {
         String sql = "UPDATE election_settings SET end_time = ? ORDER BY id DESC LIMIT 1";
         Connection conn = null;
