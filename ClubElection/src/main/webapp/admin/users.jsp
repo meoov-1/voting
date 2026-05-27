@@ -17,7 +17,6 @@
     int votedCount        = request.getAttribute("votedCount")   != null ? (int) request.getAttribute("votedCount")   : 0;
     int notVotedCount     = request.getAttribute("notVotedCount")!= null ? (int) request.getAttribute("notVotedCount"): 0;
     int pendingCount      = request.getAttribute("pendingCount") != null ? (int) request.getAttribute("pendingCount") : 0;
-    boolean electionActive = request.getAttribute("electionActive") != null && (boolean) request.getAttribute("electionActive");
     String adminUsername  = (String) session.getAttribute("admin_username");
 %>
 
@@ -91,11 +90,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             <div>
                 <strong>Privacy Protected</strong>
-                <% if (electionActive) { %>
-                <span>Live voting progress is hidden until the election ends.</span>
-                <% } else { %>
                 <span>You can see who has voted, but vote choices are never stored or displayed. Voting is fully anonymous.</span>
-                <% } %>
             </div>
         </div>
         <% } %>
@@ -123,14 +118,12 @@
             <a href="${pageContext.request.contextPath}/admin/users" class="filter-tab <%= "all".equals(filter) ? "active" : "" %>">
                 Approved <span class="tab-count"><%= totalCount %></span>
             </a>
-            <% if (!electionActive) { %>
             <a href="${pageContext.request.contextPath}/admin/users?filter=voted" class="filter-tab <%= "voted".equals(filter) ? "active" : "" %>">
                 Voted <span class="tab-count tab-count-green"><%= votedCount %></span>
             </a>
             <a href="${pageContext.request.contextPath}/admin/users?filter=not_voted" class="filter-tab <%= "not_voted".equals(filter) ? "active" : "" %>">
                 Not Voted <span class="tab-count tab-count-orange"><%= notVotedCount %></span>
             </a>
-            <% } %>
             <a href="${pageContext.request.contextPath}/admin/users?filter=pending" class="filter-tab <%= "pending".equals(filter) ? "active" : "" %>">
                 Pending
                 <span class="tab-count <%= pendingCount > 0 ? "tab-count-red" : "" %>"><%= pendingCount %></span>
@@ -219,7 +212,7 @@
                             <th>Name</th>
                             <th>Email</th>
                             <th>Registered</th>
-                            <th><%= electionActive ? "Voting Privacy" : "Vote Status" %></th>
+                            <th>Vote Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -235,12 +228,7 @@
                             <td class="user-email"><%= u.getEmail() %></td>
                             <td class="user-date"><%= u.getCreatedAt() != null ? u.getCreatedAt().toString().substring(0,10) : "—" %></td>
                             <td>
-                                <% if (electionActive) { %>
-                                <span class="status-pill pill-pending">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                    Hidden Until End
-                                </span>
-                                <% } else if (u.isHasVoted()) { %>
+                                <% if (u.isHasVoted()) { %>
                                 <span class="status-pill pill-voted">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                                     Voted

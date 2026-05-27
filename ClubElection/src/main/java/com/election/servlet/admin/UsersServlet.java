@@ -1,8 +1,6 @@
 package com.election.servlet.admin;
 
 import com.election.dao.UserDAO;
-import com.election.dao.ElectionSettingsDAO;
-import com.election.model.ElectionSettings;
 import com.election.model.User;
 
 import jakarta.servlet.ServletException;
@@ -15,7 +13,6 @@ import java.util.List;
 public class UsersServlet extends HttpServlet {
 
     private final UserDAO userDAO = new UserDAO();
-    private final ElectionSettingsDAO settingsDAO = new ElectionSettingsDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -30,13 +27,8 @@ public class UsersServlet extends HttpServlet {
         String filter = request.getParameter("filter");
 
         try {
-            ElectionSettings settings = settingsDAO.getSettings();
-            boolean electionActive = settings != null && settings.isActive();
             List<User> users;
-            if (electionActive && ("voted".equals(filter) || "not_voted".equals(filter))) {
-                users = userDAO.getAllUsers();
-                filter = "all";
-            } else if ("voted".equals(filter)) {
+            if ("voted".equals(filter)) {
                 users = userDAO.getUsersWhoVoted();
             } else if ("not_voted".equals(filter)) {
                 users = userDAO.getUsersWhoNotVoted();
@@ -58,7 +50,6 @@ public class UsersServlet extends HttpServlet {
             request.setAttribute("votedCount", votedCount);
             request.setAttribute("notVotedCount", notVotedCount);
             request.setAttribute("pendingCount", pendingCount);
-            request.setAttribute("electionActive", electionActive);
 
             String msg = request.getParameter("msg");
             if (msg != null) request.setAttribute("success", msg);
