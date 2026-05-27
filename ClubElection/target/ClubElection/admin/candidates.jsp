@@ -108,7 +108,6 @@
                     <tr>
                         <th>Candidate</th>
                         <th>Position</th>
-                        <th>Votes</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -131,7 +130,6 @@
                             </div>
                         </td>
                         <td><span class="position-badge"><%= c.getPosition() %></span></td>
-                        <td><span class="vote-badge"><%= c.getVoteCount() %></span></td>
                         <td>
                             <div class="table-actions">
                                 <a href="${pageContext.request.contextPath}/admin/candidates?action=edit&id=<%= c.getCandidateId() %>" class="btn btn-ghost btn-xs">

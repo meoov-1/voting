@@ -204,47 +204,16 @@
             </div>
         </div>
 
-        <!-- Live Results -->
+        <!-- Results Hidden for Privacy -->
         <div class="results-section">
             <div class="section-header">
-                <h3 class="section-title">Live Vote Counts</h3>
-                <a href="${pageContext.request.contextPath}/admin/candidates" class="btn btn-ghost btn-sm">Manage Candidates</a>
+                <h3 class="section-title">Vote Results Hidden</h3>
             </div>
-            <% if (candidates == null || candidates.isEmpty()) { %>
             <div class="empty-state glass">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                <h3>No Candidates</h3>
-                <p>Add candidates to see live results.</p>
-                <a href="${pageContext.request.contextPath}/admin/candidates?action=add" class="btn btn-primary">Add Candidate</a>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                <h3>Privacy is Protected</h3>
+                <p>Candidate vote totals are hidden in the admin panel to preserve voter anonymity.</p>
             </div>
-            <% } else { %>
-            <div class="results-list">
-                <% for (Candidate c : candidates) {
-                    double pct = totalVotes > 0 ? (c.getVoteCount() * 100.0 / totalVotes) : 0;
-                %>
-                <div class="result-row glass">
-                    <div class="result-candidate">
-                        <% if (c.getImagePath() != null && !c.getImagePath().isEmpty()) { %>
-                        <img src="${pageContext.request.contextPath}/<%= c.getImagePath() %>" alt="<%= c.getName() %>" class="result-avatar">
-                        <% } else { %>
-                        <div class="result-avatar-placeholder"><%= c.getName().substring(0,1).toUpperCase() %></div>
-                        <% } %>
-                        <div>
-                            <strong><%= c.getName() %></strong>
-                            <span class="result-position"><%= c.getPosition() %></span>
-                        </div>
-                    </div>
-                    <div class="result-bar-wrap">
-                        <div class="result-bar">
-                            <div class="result-bar-fill" style="width: <%= String.format("%.1f", pct) %>%"></div>
-                        </div>
-                        <span class="result-pct"><%= String.format("%.1f", pct) %>%</span>
-                    </div>
-                    <div class="result-count"><%= c.getVoteCount() %> votes</div>
-                </div>
-                <% } %>
-            </div>
-            <% } %>
         </div>
 
     </div><!-- /admin-content -->
