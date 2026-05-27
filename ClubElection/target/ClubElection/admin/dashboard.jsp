@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.election.model.Candidate, com.election.model.ElectionSettings, java.util.List" %>
+<%@ page import="com.election.model.ElectionSettings" %>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -12,7 +12,6 @@
 
 <%
     ElectionSettings settings = (ElectionSettings) request.getAttribute("settings");
-    List<Candidate> candidates = (List<Candidate>) request.getAttribute("candidates");
     int totalUsers   = request.getAttribute("totalUsers")   != null ? (int) request.getAttribute("totalUsers")   : 0;
     int votedCount   = request.getAttribute("votedCount")   != null ? (int) request.getAttribute("votedCount")   : 0;
     int notVotedCount= request.getAttribute("notVotedCount")!= null ? (int) request.getAttribute("notVotedCount"): 0;
@@ -46,10 +45,6 @@
         <a href="${pageContext.request.contextPath}/admin/election-settings" class="sidebar-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             Settings
-        </a>
-        <a href="${pageContext.request.contextPath}/admin/export" class="sidebar-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export CSV
         </a>
     </nav>
     <div class="sidebar-footer">
@@ -90,8 +85,11 @@
     <div class="admin-content">
 
         <!-- Alerts -->
-        <% if (request.getAttribute("error") != null) { %>
-        <div class="alert alert-error"><%= request.getAttribute("error") %></div>
+        <% String error = request.getAttribute("error") != null
+                ? (String) request.getAttribute("error")
+                : request.getParameter("error"); %>
+        <% if (error != null && !error.isEmpty()) { %>
+        <div class="alert alert-error"><%= error %></div>
         <% } %>
         <% String msg = request.getParameter("msg"); if (msg != null && !msg.isEmpty()) { %>
         <div class="alert alert-success"><%= msg %></div>
@@ -108,6 +106,7 @@
                     <span class="stat-label">Total Registered</span>
                 </div>
             </div>
+            <% if (!isActive) { %>
             <div class="stat-card glass">
                 <div class="stat-icon stat-icon-green">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -135,6 +134,7 @@
                     <span class="stat-label">Total Votes Cast</span>
                 </div>
             </div>
+            <% } %>
             <% if (pendingCount > 0) { %>
             <a href="${pageContext.request.contextPath}/admin/users?filter=pending" class="stat-card glass stat-card-link">
                 <div class="stat-icon stat-icon-warning">
@@ -149,7 +149,7 @@
         </div>
 
         <!-- Voter Turnout Bar -->
-        <% if (totalUsers > 0) { %>
+        <% if (!isActive && totalUsers > 0) { %>
         <div class="turnout-card glass">
             <div class="turnout-header">
                 <h3>Voter Turnout</h3>
@@ -197,22 +197,12 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                     Settings
                 </a>
+                <% if (!isActive) { %>
                 <a href="${pageContext.request.contextPath}/admin/export" class="btn btn-ghost">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Export CSV
                 </a>
-            </div>
-        </div>
-
-        <!-- Results Hidden for Privacy -->
-        <div class="results-section">
-            <div class="section-header">
-                <h3 class="section-title">Vote Results Hidden</h3>
-            </div>
-            <div class="empty-state glass">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                <h3>Privacy is Protected</h3>
-                <p>Candidate vote totals are hidden in the admin panel to preserve voter anonymity.</p>
+                <% } %>
             </div>
         </div>
 

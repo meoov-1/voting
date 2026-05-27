@@ -1,8 +1,10 @@
 package com.election.servlet.admin;
 
 import com.election.dao.CandidateDAO;
+import com.election.dao.ElectionSettingsDAO;
 import com.election.dao.VoteDAO;
 import com.election.model.Candidate;
+import com.election.model.ElectionSettings;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,6 +17,7 @@ public class ExportResultsServlet extends HttpServlet {
 
     private final CandidateDAO candidateDAO = new CandidateDAO();
     private final VoteDAO voteDAO = new VoteDAO();
+    private final ElectionSettingsDAO settingsDAO = new ElectionSettingsDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,6 +30,12 @@ public class ExportResultsServlet extends HttpServlet {
         }
 
         try {
+            ElectionSettings settings = settingsDAO.getSettings();
+            if (settings != null && settings.isActive()) {
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard?error=Results+are+hidden+until+the+election+ends");
+                return;
+            }
+
             List<Candidate> candidates = candidateDAO.getAllCandidates();
             int totalVotes = voteDAO.getTotalVotes();
 
