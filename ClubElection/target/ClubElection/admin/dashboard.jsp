@@ -156,7 +156,7 @@
                 <span class="turnout-pct"><%= Math.round(votedCount * 100.0 / totalUsers) %>%</span>
             </div>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: <%= Math.round(votedCount * 100.0 / totalUsers) %>%"></div>
+                <div class="progress-fill" style="width: <%= Math.round(votedCount * 100.0 / totalUsers) %>%;"></div>
             </div>
             <div class="turnout-labels">
                 <span><%= votedCount %> voted</span>

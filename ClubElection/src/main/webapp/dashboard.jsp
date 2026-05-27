@@ -134,13 +134,6 @@
                     <p class="candidate-bio"><%= c.getBio() %></p>
                     <% } %>
                 </div>
-                <% if (hasVoted) { %>
-                <div class="vote-count-bar">
-                    <div class="vote-count-label">
-                        <span><%= c.getVoteCount() %> vote<%= c.getVoteCount() != 1 ? "s" : "" %></span>
-                    </div>
-                </div>
-                <% } %>
                 <div class="candidate-check">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
